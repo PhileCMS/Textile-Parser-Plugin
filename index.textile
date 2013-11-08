@@ -1,0 +1,183 @@
+/*
+Title: Welcome
+Description: This description will go in the meta description tag
+*/
+
+h2. Welcome to Phile
+
+Congratulations, you have successfully installed "Phile":https://github.com/PhileCMS/Phile. Phile is a Markdown file-based CMS.
+
+h3. Creating Content
+
+Phile is a flat file CMS, this means there is no administration backend and database to deal with. You simply create <code>.md</code> files in the "content" folder and that becomes a page. For example, this file is called <code>index.md</code> and is shown as the main landing page.
+
+If you create a folder within the content folder (e.g. <code>content/sub</code>) and put an <code>index.md</code> inside it, you can access that folder at the URL <code>http://yousite.com/sub</code>. If you want another page within the sub folder, simply create a text file with the corresponding name (e.g. <code>content/sub/page.md</code>) and you will be able to access it from the URL <code>http://yousite.com/sub/page</code>. Below we've shown some examples of content locations and their corresponing URL's:
+
+| Physical Location           | URL                   |
+| content/index.md            | /                     |
+| content/sub.md              | /sub                  |
+| content/sub/index.md        | /sub (same as above)  |
+| content/sub/page.md         | /sub/page             |
+| content/a/very/long/url.md  | /a/very/long/url      |
+
+If a file cannot be found, the file <code>content/404.md</code> will be shown.
+
+h3. Text File Markup
+
+Text files are marked up using "Markdown":http://daringfireball.net/projects/markdown/syntax. They can also contain regular HTML.
+
+At the top of text files you can place a block comment and specify certain attributes of the page. For example:
+
+<pre class="markdown">
+/*
+Title: Welcome
+Description: This description will go in the meta description tag
+Author: Joe Bloggs
+Date: 2013/01/01
+Robots: noindex,nofollow
+*/
+</pre>
+
+These values will be contained in the <code>{{ meta }}</code> variable in themes (see below).
+
+There are also certain variables that you can use in your text files:
+
+* <code>%base_url%</code> - The URL to your Phile site
+
+h3. Themes
+
+You can create themes for your Phile installation in the "themes" folder. Check out the default theme for an example of a theme. Phile uses
+"Twig":http://twig.sensiolabs.org/documentation for it's templating engine. You can select your theme by setting the <code>$config"'theme":</code> variable
+in config.php to your theme folder.
+
+All themes must include an <code>index.html</code> file to define the HTML structure of the theme. Below are the Twig variables that are available to use in your theme:
+
+* <code>{{ config }}</code> - Conatins the values you set in config.php (e.g. <code>{{ config.theme }}</code> = "default")
+* <code>{{ base_dir }}</code> - The path to your Phile root directory
+* <code>{{ base_url }}</code> - The URL to your Phile site
+* <code>{{ theme_dir }}</code> - The path to the Phile active theme direcotry
+* <code>{{ theme_url }}</code> - The URL to the Phile active theme direcotry
+* <code>{{ site_title }}</code> - Shortcut to the site title (defined in config.php)
+* <code>{{ meta }}</code> - Contains the meta values from the current page
+** <code>{{ meta.title }}</code>
+** <code>{{ meta.description }}</code>
+** <code>{{ meta.author }}</code>
+** <code>{{ meta.date }}</code>
+** <code>{{ meta.date_formatted }}</code>
+** <code>{{ meta.robots }}</code>
+* <code>{{ content }}</code> - The content of the current page (after it has been processed through Markdown)
+* <code>{{ pages }}</code> - A collection of all the content in your site
+** <code>{{ page.title }}</code>
+** <code>{{ page.url }}</code>
+** <code>{{ page.author }}</code>
+** <code>{{ page.date }}</code>
+** <code>{{ page.date_formatted }}</code>
+** <code>{{ page.content }}</code>
+** <code>{{ page.excerpt }}</code>
+* <code>{{ prev_page }}</code> - A page object of the previous page (relative to current_page)
+* <code>{{ current_page }}</code> - A page object of the current_page
+* <code>{{ next_page }}</code> - A page object of the next page (relative to current_page)
+* <code>{{ is_front_page }}</code> - A boolean flag for the front page
+
+Pages can be used like:
+
+<pre class="html">
+&lt;ul class=&quot;nav&quot;&gt;
+  {% for page in pages %}
+    &lt;li&gt;&lt;a href=&quot;{{ page.url }}&quot;&gt;{{ page.title }}&lt;/a&gt;&lt;/li&gt;
+  {% endfor %}
+&lt;/ul&gt;
+</pre>
+
+h3. Config
+
+You can override the default Phile settings (and add your own custom settings) by editing config.php in the root Phile directory. The config.php file
+lists all of the settings and their defaults. To override a setting, simply uncomment it in config.php and set your custom value.
+
+h3. Events
+
+In the core we trigger a lot of events, which help to manipulate content or other stuff within a plugin.
+To use the event system, you only have to register your plugin for a specific event, look at the example plugin for more an example.
+The following list shows all events.
+
+h4. plugins_loaded
+
+this event is triggered after the plugins loaded
+
+h4. config_loaded
+
+this event is triggered after the configuration is fully loaded
+
+h4. request_uri
+
+this event is triggered after the request uri is detected.
+| param                   | type                               | description                                                          |
+| <code>uri</code>                   | string                             | the requested uri (without install_path)                             |
+
+h4. before\_init\_template
+
+this event is triggered before the the template engine is init
+
+h4. before\_render_\template
+
+this event is triggered before the template is rendered
+
+| param                   | type                               | description                                                          |
+| <code>templateEngine</code>        | \Phile\Template\TemplateInterface  | the template engine                                                  |
+
+h4. after\_render\_template
+
+this event is triggered after the template is rendered
+
+| param                   | type                               | description                                                          |
+| <code>templateEngine</code>        | \Phile\Template\TemplateInterface  | the template engine                                                  |
+| <code>output</code>                | string                             | the parsed and ready output                                          |
+
+h4. before\_read\_file\_meta
+
+this event is triggered before the meta data readed and parsed
+
+| param                   | type                | description                                                      |
+| <code>rawData</code>               | string              | the unparsed data                                                |
+| <code>meta</code>                  | \Phile\Model\Meta   | the meta model                                                   |
+
+h4. after\_read\_file\_meta
+
+this event is triggered after the meta data readed and parsed
+
+| param                   | type                | description                                                      |
+| <code>rawData</code>               | string              | the unparsed data                                                |
+| <code>meta</code>                  | \Phile\Model\Meta   | the meta model                                                   |
+
+h4. before\_load\_content
+
+this event is triggered before the content is loaded
+
+| param                   | type                | description                                                      |
+| <code>filePath</code>              | string              | the path to the file                                             |
+| <code>page</code>                  | \Phile\Model\Page   | the page model                                                   |
+
+h4. after\_load\_content
+
+this event is triggered after the content is loaded
+
+| param                   | type                | description                                                      |
+| <code>filePath</code>              | string              | the path to the file                                             |
+| <code>rawData</code>               | string              | the raw data                                                     |
+| <code>page</code>                  | \Phile\Model\Page   | the page model                                                   |
+
+h4. before\_parse\_content
+
+this event is triggered before the content is parsed
+
+| param                   | type                | description                                                      |
+| <code>content</code>               | string              | the raw data                                                     |
+| <code>page</code>                  | \Phile\Model\Page   | the page model                                                   |
+
+h4. after\_parse\_content
+
+this event is triggered after the content is parsed
+
+| param                   | type                | description                                                      |
+| <code>content</code>               | string              | the raw data                                                     |
+| <code>page</code>                  | \Phile\Model\Page   | the page model                                                   |
