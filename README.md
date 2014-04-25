@@ -3,10 +3,25 @@ Textile-Parser-Plugin
 
 Replace the default parser (Markdown) in [Phile](https://github.com/PhileCMS/Phile) with the [PHP-Textile](https://github.com/textile/php-textile) parser.
 
-### Installation
+### 1. Installation
 
 * Install [Phile](https://github.com/PhileCMS/Phile)
-* [Download this repo](https://github.com/james2doyle/Textile-Parser-Plugin/archive/master.zip) and drop it into the _Phile root directory_
+
+### 1.1 Installation (composer)
+```
+php composer.phar require phile/sundown:*
+```
+### 1.2 Installation (Download)
+
+* Clone this repo into `plugins/phile/textile`
+
+### 2. Activation
+
+After you have installed the plugin. You need to add the following line to your `config.php` file:
+
+```php
+$config['plugins']['phile\\textile'] = array('active' => true);
+```
 
 Then add the Textile dependency to your composer.json file:
 
@@ -26,8 +41,8 @@ After you have installed the plugin. You need to add the following line to your 
 
 ```php
 $config['plugins'] = array(
-  'phileParserMarkdown' => array('active' => false),
-  'phileParserTextile' => array('active' => true) // use textile
+  'phile\\parserMarkdown' => array('active' => false),
+  'phile\\textile' => array('active' => true) // use textile
 );
 ```
 
