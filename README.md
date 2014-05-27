@@ -9,7 +9,7 @@ Replace the default parser (Markdown) in [Phile](https://github.com/PhileCMS/Phi
 
 ### 1.1 Installation (composer)
 ```
-php composer.phar require phile/sundown:*
+php composer.phar require phile/textile:*
 ```
 ### 1.2 Installation (Download)
 
